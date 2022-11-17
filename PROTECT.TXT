@@ -1,0 +1,197 @@
+         Protect - A Hard Disk Write Protect Utility
+
+1. Legal Stuff.
+
+    Protect is free software.  Binary, source, and documentation 
+placed into the public domain 12 December 1992.
+
+THERE IS NO WARRANTY.  Protect is provided 'As is', without 
+warranty of any kind.
+
+PLEASE, DON'T ASK FOR SUPPORT OR WARRANTY PROTECTION.  THE SOURCE 
+IS PROVIDED.  THAT'S ALL I CAN DO.
+
+
+2. Introduction.
+
+     Protect write protects fixed disks on IBM XT/AT and 
+compatible computers running DOS.  Protect is a software emulator 
+of the write protect tabs used on removable disks.  All software 
+that can't write to a write protected floppy disk can't write to 
+a Protected hard disk.  Protect works by trapping disks accesses 
+at the BIOS level and filtering out those which change the data 
+on protected disk(s).
+     Protect has many uses.  One is to test software.  Any 
+program that does not need to write to the hard disk should work 
+with Protect on.  If it doesn't, it may contain a virus or Trojan 
+Horse.
+     Protect can also be used to test programs that need to write 
+to the hard disk.  Many programs can be told through parameters 
+or setup routines to write only to floppy disks.  Protect can be 
+used to verify a program writes only where it is supposed to 
+write.
+     Another application for Protect is safeguarding sensitive 
+information.  Sensitive information should not be placed on a 
+fixed disk (unless it is possible to lock up the whole computer).  
+Even if files are deleted, they can retrieved, using utility 
+packages.  Data may be erased by copying over it many times, but 
+to be sure, the whole disk must be erased (see below).  Erasing 
+is nuisance; plus, it is easy to lose data if backups are not 
+made.
+     Why must the *whole* disk be erased?  Many applications, 
+such as spreadsheets and word processors must be run from a hard 
+disk; they will not fit on a floppy.  These same applications 
+often use work files, to store data temporarily.  There is no way 
+to know where the temporary files were once the application is 
+exited, except by searching the disk for them.  Again, very 
+inconvenient.
+     Protect can be used to prevent temporary files from being 
+placed on a hard disk.  The sensitive data can be put on a floppy 
+(without a write protect tab).  The large applications can be 
+left on the hard disk, with Protect on.  Because the hard disk is 
+write protected, but the floppy isn't, the temporary files can 
+only be written to the floppy.  All the sensitive data remains on 
+the same floppy disk, which can be removed and locked up.
+     This version of Protect is based on one which has been used 
+for several years by the US Government to protect sensitive 
+information.  Using Protect, and a few common sense rules 
+(example: no disk with sensitive information is ever (even for a 
+second) put in a machine with an unprotected hard disk) one can 
+guarantee that protected information will not be left on a fixed 
+disk.
+     This version of Protect differs from original version in two 
+important ways:
+a) It protects against a larger number of write disk accesses.  
+(See Section 4, How Protect Works, below.)
+
+b) If more than one fixed disk is installed, some disks can be 
+write protected while others are not.  This is to support 
+removable hard disks.
+
+     Some shortfalls of Protect: 
+
+a) Protect can't unload itself.  It is a TSR which can only be 
+removed by rebooting.
+
+b) If the computer is booted from a floppy disk, the hard disk 
+may left unprotected.  (See below.)
+
+c) This version of Protect can't protect against disk accesses it 
+doesn't know about.  (Future versions of DOS may add new disk 
+accesses which change data, making Protect outdated.) 
+Note 12 Dec 1992: This includes DOS 5.0
+
+d) Partitions.  It is not possible to protect some partitions and 
+leave others unprotected on the same disk.  (See below.)
+
+
+3. How to Use Protect.
+
+a) Protect all fixed disks.  The first time Protect is run, it 
+loads itself into memory, then lists its status.  If called with 
+no parameters, it will protect (write protect) every fixed disk 
+DOS knows about.  Once all disks are protected, the status can't 
+be changed without using Unprot, or rebooting (See note about 
+autoexec.bat files, above.)
+   Example, protect all fixed disks:
+]C:\> protect
+]Loading Protection: List of protected physical disks: All.
+
+   To protect all disks if protect has already been loaded,
+type "protect a"; example:
+]C:\> protect a
+]Protection already loaded: List of protected physical disks: All.
+    
+b) Showing Protects Status.  When run without parameters 
+subsequent times, Protect will give a listing of its status. 
+   Example, show protection status:
+]C:\> protect
+]Protection already loaded: List of protected physical disks: All.
+
+c) Protect some fixed disks, but leave the others unprotected.  
+Protect accepts a parameter which adds protection for a specific 
+*physical* disk.  Once a disk is protected, it can't be 
+unprotected, except by unprotecting all disks (with Unprot, or 
+rebooting).
+   Protect numbers the fixed disks starting at 0.  The boot disk 
+is always disk 0.  If there is a second physical disk installed, 
+it is disk 1.  Current versions of DOS allow only 2 physical hard 
+disks.  However, Protect will allow you to protect up to 7 disks, 
+if they exist.
+   Example.  Protect the boot disk, but leave any others 
+unprotected.  Since Protect is not loaded, it will load itself 
+first:
+]C:\> protect 0
+]Loading Protection: List of protected physical disks: 1
+
+   Example.  Add protection for the second fixed disk: 
+]C:\> protect 1
+]Loading Protection: List of protected physical disks: 1 0
+
+   It is important to note the difference between a *physical* 
+disk and a *logical* disk.  A physical disk is a piece of 
+hardware.  A logical disk is an area of a physical disk referred 
+to by a drive letter (like C:).  Using the fdisk utility, it is 
+possible to partition a physical disk into more than one logical 
+disk.  No matter how many partitions are on a disk, there is 
+still only one physical disk.
+   Protect only deals with physical disks; it knows nothing about 
+partitions and logical disks.  It is not possible to protect one 
+partition and leave another unprotected on the same physical 
+disk.  (Why? In order to make Protect reliable enough to be worth 
+while, it must work at the BIOS level.  At the BIOS level, 
+logical disks have already been mapped to their respective 
+physical disks.  Protect does not know which logical disk was 
+accessed, only the physical disk it is on.)
+
+d) Turning Protection Off.  The Unprot program is used to turn 
+protection off.  Example:
+
+]C:\> unprot
+Protection Off. (But still loaded.)
+
+e) Using Protect in an autoexec.bat file.  Before placing Protect 
+in the autoexec.bat file, be sure to have Unprot or a bootable 
+floppy disk.  Otherwise, it will be impossible to change the hard 
+disk.  Protection will always be on (and it will be impossible to 
+edit the autoexec.bat file.)
+
+f) Guaranteeing protection.  Protect must be run to protect the 
+disk.  Even if protect is in the autoexec.bat, it may still be 
+possible to write to the hard disk under these circumstances:
+    1) The computer is booted from a floppy disk without an 
+autoexec.bat file.
+    2) The computer is booted from a floppy disk without protect 
+in the floppy's autoexec.bat file.
+    3) The computer is booted from a any disk with protect in the 
+disk's autoexec.bat file, but protect is not found in the path.
+
+ALWAYS CHECK FOR THE "Protection loaded..." MESSAGE 
+
+PROTECT CAN ALWAYS BE RUN TO CHECK THE PROTECTION STATUS
+
+
+4. How Protect Works.
+    Protect works by changing the interrupt handler for BIOS 
+interrupt 13h.  Interrupt 13h is the Disk I/O Services interrupt.
+    Protect makes the change by leaving part of itself in memory.  
+(It is a Terminate and Stay Resident program.)  Protect also 
+changes the interrupt table so all calls to interrupt 13h go to 
+the part of protect left in memory.  Protect examines the disk 
+request.  If the request is to an unprotected disk, or is a read, 
+Protect then passes the the request to the BIOS, and the request 
+happens as if Protect were not there.
+    If a disk request would write to a protected disk, Protect 
+returns to the caller.  Protect leaves the registers set to the 
+same values the BIOS sets them to after an attempt to write to a 
+write protected floppy disk (Carry bit, on, 03h in ah).
+
+The disk access which are not allowed to a Protected disk:
+  03h: Write a sector. 
+  05h: Format a sector.
+  06h: Format a track (XT class BIOS only).
+  07h: Format the disk (XT class BIOS only).
+  0Bh: Write a long sector (DOS diagnostic routine).
+
+
+

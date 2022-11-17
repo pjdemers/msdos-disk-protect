@@ -1,0 +1,4 @@
+*.COM binary
+*.ASM eol=crlf
+*.MAK eol=crlf
+PROTECT.TXT eol=crlf
